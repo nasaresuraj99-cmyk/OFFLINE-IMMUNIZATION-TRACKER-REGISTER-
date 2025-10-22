@@ -1,0 +1,256 @@
+/* Forgot Password Styles */
+.forgot-password-link {
+  display: block;
+  text-align: center;
+  margin: 15px 0;
+  color: #006400;
+  text-decoration: none;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+.login-links {
+  margin: 15px 0;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+/* Security Questions Styles */
+.security-questions {
+  margin: 20px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #006400;
+}
+
+.security-questions h4 {
+  color: #006400;
+  margin-bottom: 5px;
+}
+
+.security-questions small {
+  color: #666;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.security-questions select {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.security-questions input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Recovery Steps Styles */
+.recovery-steps {
+  margin: 20px 0;
+}
+
+.recovery-step {
+  display: none;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.recovery-step.active {
+  display: block;
+}
+
+.recovery-step h4 {
+  color: #006400;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.2em;
+}
+
+.security-question-item {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-bottom: 15px;
+}
+
+.security-question-item label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 600;
+}
+
+.security-question-item .question-text {
+  font-weight: 600;
+  color: #006400;
+  margin-bottom: 10px;
+  padding: 8px;
+  background: #f0f8ff;
+  border-radius: 4px;
+}
+
+.security-question-item input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* Change Password Modal */
+.change-password-form {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.change-password-form .form-group {
+  margin-bottom: 20px;
+}
+
+/* Step Indicator */
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 15px;
+}
+
+.step-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #ddd;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.step.active .step-number {
+  background: #006400;
+}
+
+.step.completed .step-number {
+  background: #28a745;
+}
+
+.step-text {
+  font-size: 0.8em;
+  color: #666;
+  text-align: center;
+}
+
+.step.active .step-text {
+  color: #006400;
+  font-weight: 600;
+}
+
+/* Success Message */
+.success-message {
+  background: #d4edda;
+  color: #155724;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #c3e6cb;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.success-message h4 {
+  margin: 0 0 10px 0;
+  color: #155724;
+}
+
+/* Error Message */
+.error-message {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #f5c6cb;
+  text-align: center;
+  margin: 20px 0;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.recovery-step {
+  animation: fadeIn 0.5s ease-in;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+  margin-top: 5px;
+  height: 4px;
+  border-radius: 2px;
+  background: #ddd;
+  overflow: hidden;
+}
+
+.strength-weak {
+  background: #dc3545;
+  width: 33%;
+}
+
+.strength-medium {
+  background: #ffc107;
+  width: 66%;
+}
+
+.strength-strong {
+  background: #28a745;
+  width: 100%;
+}
+
+.password-strength-text {
+  font-size: 0.8em;
+  margin-top: 2px;
+  text-align: right;
+}
+
+/* Responsive Design for Recovery */
+@media (max-width: 768px) {
+  .step-indicator {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .step {
+    margin: 5px 0;
+  }
+  
+  .security-questions {
+    padding: 15px;
+  }
+}
