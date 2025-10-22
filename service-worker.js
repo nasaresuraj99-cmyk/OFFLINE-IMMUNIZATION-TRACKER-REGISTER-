@@ -1,4 +1,4 @@
-const CACHE_NAME = 'immunization-tracker-v5';
+const CACHE_NAME = 'immunization-tracker-v3';
 const urlsToCache = [
   './',
   './index.html',

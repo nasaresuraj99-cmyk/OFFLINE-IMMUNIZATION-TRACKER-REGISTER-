@@ -9,278 +9,323 @@
   <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💉</text></svg>">
 </head>
 <body>
-  <!-- Login Screen -->
-  <div id="loginScreen" class="login-screen">
-    <div class="login-container">
-      <div class="login-header">
-        <h1>🏥 Immunization Tracker</h1>
-        <p>Multi-Facility Healthcare System</p>
+  <!-- Offline Indicator -->
+  <div id="offlineIndicator" class="offline-indicator">
+    ⚠️ You are currently offline. The app will work with limited functionality.
+  </div>
+
+  <!-- Notification Area -->
+  <div id="notificationArea"></div>
+
+  <h1>🏥 Immunization Tracker</h1>
+
+  <!-- Loading Indicator -->
+  <div id="loadingIndicator" class="loading">
+    <div class="spinner"></div>
+    <p>Loading data...</p>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <button onclick="scrollToSection('registration')">➕ Register Child</button>
+    <button onclick="scrollToSection('childHealthRegister')">📋 View Register</button>
+    <button onclick="scrollToSection('dashboard')">📊 View Dashboard</button>
+    <button onclick="showTodayAppointments()">📅 Today's Appointments</button>
+  </div>
+
+  <!-- Facility Name Section -->
+  <section id="facility">
+    <h2>🏛️ Facility Information</h2>
+    <form id="facilityForm">
+      <label for="facilityName">Facility Name:</label>
+      <input type="text" id="facilityName" required>
+      <button type="submit">💾 Save Facility Name</button>
+    </form>
+  </section>
+
+  <!-- Stats Section -->
+  <section id="stats">
+    <h2>📈 Statistics</h2>
+    <div class="stats-container">
+      <div class="stat-card">
+        <h3>Total Children</h3>
+        <div class="stat-value" id="totalChildren">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Defaulters</h3>
+        <div class="stat-value" id="totalDefaulters">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Due Soon</h3>
+        <div class="stat-value" id="totalDueSoon">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>Upcoming</h3>
+        <div class="stat-value" id="totalUpcoming">0</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 1.0: Registration Form -->
+  <section id="registration">
+    <h2>👶 Register Child</h2>
+    <form id="registrationForm">
+      <label for="childName">Child's Name:</label>
+      <input type="text" id="childName" required>
+
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" required>
+
+      <label for="sex">Sex:</label>
+      <select id="sex" required>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+
+      <label for="address">Address/Community:</label>
+      <input type="text" id="address" required>
+
+      <label for="contact">Contact (Optional):</label>
+      <input type="text" id="contact">
+
+      <button type="submit">✅ Register Child</button>
+    </form>
+  </section>
+
+  <!-- Section 1.1: Child Health Register -->
+  <section id="childHealthRegister">
+    <h2>📋 Child Health Register</h2>
+    <div class="search-container">
+      <input type="text" id="search" placeholder="🔍 Search by name or registration number..." oninput="filterChildren()">
+    </div>
+    <table id="childTable">
+      <thead>
+        <tr>
+          <th>Reg No.</th>
+          <th>Name</th>
+          <th>DOB</th>
+          <th>Sex</th>
+          <th>Address</th>
+          <th>Contact</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows will be populated dynamically -->
+      </tbody>
+    </table>
+    
+    <div class="action-buttons">
+      <button onclick="exportToCSV()">📤 Export to CSV</button>
+      <button onclick="printRecords()">🖨️ Print Records</button>
+      <button onclick="backupData()">💾 Backup Data</button>
+      <input type="file" id="restoreFile" accept=".json" style="display: none;">
+      <button onclick="document.getElementById('restoreFile').click()">📥 Restore Data</button>
+      <button onclick="clearAllData()" class="danger">🗑️ Clear All Data</button>
+      <button onclick="openHelpModal()">❓ Help/Instructions</button>
+    </div>
+  </section>
+
+  <!-- Section 1.2: Dashboard -->
+  <section id="dashboard">
+    <h2>📊 Dashboard</h2>
+    <div class="tab-container">
+      <div class="tab-buttons">
+        <button class="tab-button active" onclick="openTab('allRecords')">All Records</button>
+        <button class="tab-button" onclick="openTab('defaulters')">Defaulters</button>
+        <button class="tab-button" onclick="openTab('dueSoon')">Due Soon (7 days)</button>
+        <button class="tab-button" onclick="openTab('upcoming')">Upcoming (30 days)</button>
       </div>
       
-      <form id="loginForm" class="login-form">
-        <h2>Facility Login</h2>
-        
-        <div class="form-group">
-          <label for="facilityCode">Facility Code:</label>
-          <input type="text" id="facilityCode" required placeholder="Enter your facility code">
-          <small>e.g., GH001, GH002, etc.</small>
-        </div>
-        
-        <div class="form-group">
-          <label for="password">Password:</label>
-          <input type="password" id="password" required placeholder="Enter password">
-        </div>
-        
-        <button type="submit" class="login-btn">🔐 Login</button>
-        
-        <div class="login-links">
-          <a href="javascript:void(0)" onclick="showForgotPasswordForm()" class="forgot-password-link">
-            🔑 Forgot Password?
-          </a>
-        </div>
-        
-        <div class="login-options">
-          <button type="button" onclick="showNewFacilityForm()" class="secondary-btn">
-            🏛️ Register New Facility
-          </button>
-          <button type="button" onclick="showDemoLogin()" class="demo-btn">
-            🚀 Quick Demo
-          </button>
-        </div>
-      </form>
+      <div id="allRecords" class="tab-content active">
+        <table id="allRecordsTable">
+          <thead>
+            <tr>
+              <th>Reg No.</th>
+              <th>Name</th>
+              <th>Completed Vaccines</th>
+              <th>Booked Vaccines</th>
+              <th>Next Visit Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div id="defaulters" class="tab-content">
+        <table id="defaultersTable">
+          <thead>
+            <tr>
+              <th>Reg No.</th>
+              <th>Name</th>
+              <th>Missed Vaccine</th>
+              <th>Missed Date</th>
+              <th>Days Overdue</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div id="dueSoon" class="tab-content">
+        <table id="dueSoonTable">
+          <thead>
+            <tr>
+              <th>Reg No.</th>
+              <th>Name</th>
+              <th>Due Vaccine</th>
+              <th>Due Date</th>
+              <th>Days Remaining</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+      
+      <div id="upcoming" class="tab-content">
+        <table id="upcomingTable">
+          <thead>
+            <tr>
+              <th>Reg No.</th>
+              <th>Name</th>
+              <th>Scheduled Vaccine</th>
+              <th>Scheduled Date</th>
+              <th>Days Remaining</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Rows will be populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 
-      <!-- New Facility Registration Form -->
-      <form id="newFacilityForm" class="login-form" style="display: none;">
-        <h2>Register New Facility</h2>
-        
-        <div class="form-group">
-          <label for="newFacilityName">Facility Name:</label>
-          <input type="text" id="newFacilityName" required placeholder="Enter facility name">
-        </div>
-        
-        <div class="form-group">
-          <label for="newFacilityCode">Facility Code:</label>
-          <input type="text" id="newFacilityCode" required placeholder="Create facility code">
-          <small>Unique code for your facility (e.g., GH001)</small>
-        </div>
-        
-        <div class="form-group">
-          <label for="newPassword">Password:</label>
-          <input type="password" id="newPassword" required placeholder="Create password">
-        </div>
-        
-        <div class="form-group">
-          <label for="confirmPassword">Confirm Password:</label>
-          <input type="password" id="confirmPassword" required placeholder="Confirm password">
-        </div>
-        
-        <div class="form-group">
-          <label for="facilityRegion">Region:</label>
-          <input type="text" id="facilityRegion" required placeholder="Enter region">
-        </div>
-        
-        <div class="form-group">
-          <label for="facilityDistrict">District:</label>
-          <input type="text" id="facilityDistrict" required placeholder="Enter district">
-        </div>
-
-        <!-- Security Questions -->
-        <div class="security-questions">
-          <h4>Security Questions</h4>
-          <small>These will help you recover your password if forgotten</small>
-          
-          <div class="form-group">
-            <label for="securityQuestion1">Security Question 1:</label>
-            <select id="securityQuestion1" required>
-              <option value="">Select a question</option>
-              <option value="What was your first pet's name?">What was your first pet's name?</option>
-              <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
-              <option value="What city were you born in?">What city were you born in?</option>
-              <option value="What is your favorite book?">What is your favorite book?</option>
-              <option value="What was your first school name?">What was your first school name?</option>
-            </select>
-            <input type="text" id="securityAnswer1" required placeholder="Your answer">
-          </div>
-          
-          <div class="form-group">
-            <label for="securityQuestion2">Security Question 2:</label>
-            <select id="securityQuestion2" required>
-              <option value="">Select a question</option>
-              <option value="What is your favorite color?">What is your favorite color?</option>
-              <option value="What was your childhood nickname?">What was your childhood nickname?</option>
-              <option value="What is your favorite food?">What is your favorite food?</option>
-              <option value="What is your father's middle name?">What is your father's middle name?</option>
-              <option value="What is your favorite movie?">What is your favorite movie?</option>
-            </select>
-            <input type="text" id="securityAnswer2" required placeholder="Your answer">
-          </div>
-        </div>
-        
-        <div class="form-actions">
-          <button type="submit" class="login-btn">🏛️ Register Facility</button>
-          <button type="button" onclick="showLoginForm()" class="secondary-btn">← Back to Login</button>
-        </div>
-      </form>
-
-      <!-- Forgot Password Form -->
-      <form id="forgotPasswordForm" class="login-form" style="display: none;">
-        <h2>🔑 Password Recovery</h2>
-        
-        <div class="recovery-steps">
-          <div class="recovery-step active" id="step1">
-            <h4>Step 1: Verify Facility</h4>
-            <div class="form-group">
-              <label for="recoveryFacilityCode">Facility Code:</label>
-              <input type="text" id="recoveryFacilityCode" required placeholder="Enter your facility code">
-            </div>
-            <button type="button" onclick="verifyFacilityForRecovery()" class="login-btn">Verify Facility</button>
-          </div>
-          
-          <div class="recovery-step" id="step2">
-            <h4>Step 2: Answer Security Questions</h4>
-            <div id="securityQuestionsContainer">
-              <!-- Security questions will be loaded here -->
-            </div>
-            <button type="button" onclick="verifySecurityAnswers()" class="login-btn">Verify Answers</button>
-          </div>
-          
-          <div class="recovery-step" id="step3">
-            <h4>Step 3: Reset Password</h4>
-            <div class="form-group">
-              <label for="newPasswordRecovery">New Password:</label>
-              <input type="password" id="newPasswordRecovery" required placeholder="Enter new password">
-              <small>Password must be at least 4 characters long</small>
-            </div>
-            <div class="form-group">
-              <label for="confirmPasswordRecovery">Confirm New Password:</label>
-              <input type="password" id="confirmPasswordRecovery" required placeholder="Confirm new password">
-            </div>
-            <button type="button" onclick="resetPassword()" class="login-btn">Reset Password</button>
-          </div>
-        </div>
-        
-        <div class="form-actions">
-          <button type="button" onclick="showLoginForm()" class="secondary-btn">← Back to Login</button>
-        </div>
-      </form>
+  <!-- Modal for Immunization Schedule -->
+  <div id="immunizationModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>💉 Immunization Schedule</h2>
+      <table id="immunizationTable">
+        <thead>
+          <tr>
+            <th>Vaccine</th>
+            <th>Date Given</th>
+            <th>Batch Number</th>
+            <th>Place Given</th>
+            <th>Remarks</th>
+            <th>Next Visit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be populated dynamically -->
+        </tbody>
+      </table>
+      <button onclick="promptToBookNextVisit()">💾 Save</button>
     </div>
   </div>
 
-  <!-- Main Application (Initially Hidden) -->
-  <div id="mainApp" style="display: none;">
-    <!-- Offline Indicator -->
-    <div id="offlineIndicator" class="offline-indicator">
-      ⚠️ You are currently offline. The app will work with limited functionality.
-    </div>
-
-    <!-- Notification Area -->
-    <div id="notificationArea"></div>
-
-    <!-- Header with Facility Info and Logout -->
-    <header class="app-header">
-      <div class="header-content">
-        <div class="facility-info">
-          <h1>🏥 Immunization Tracker</h1>
-          <div class="facility-details">
-            <span id="currentFacilityName">Facility Name</span>
-            <span id="currentFacilityCode" class="facility-code"></span>
-          </div>
+  <!-- Modal for Booking Next Visit -->
+  <div id="bookingModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeBookingModal()">&times;</span>
+      <h2>📅 Book Next Visit</h2>
+      <div class="booking-form">
+        <h3>Select Vaccines for Next Visit:</h3>
+        <div id="vaccineSelection">
+          <!-- Vaccine checkboxes will be populated dynamically -->
         </div>
-        <div class="user-actions">
-          <button onclick="switchFacility()" class="header-btn">🔄 Switch Facility</button>
-          <button onclick="showChangePasswordModal()" class="header-btn">🔒 Change Password</button>
-          <button onclick="logout()" class="header-btn logout-btn">🚪 Logout</button>
-        </div>
+        <label for="nextVisitDate">Next Visit Date:</label>
+        <input type="date" id="nextVisitDate" required>
+        <button onclick="saveBooking()">✅ Confirm Booking</button>
       </div>
-    </header>
-
-    <!-- Loading Indicator -->
-    <div id="loadingIndicator" class="loading">
-      <div class="spinner"></div>
-      <p>Loading data...</p>
     </div>
+  </div>
 
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-      <button onclick="scrollToSection('registration')">➕ Register Child</button>
-      <button onclick="scrollToSection('childHealthRegister')">📋 View Register</button>
-      <button onclick="scrollToSection('dashboard')">📊 View Dashboard</button>
-      <button onclick="showTodayAppointments()">📅 Today's Appointments</button>
-    </div>
-
-    <!-- Facility Name Section -->
-    <section id="facility">
-      <h2>🏛️ Facility Information</h2>
-      <form id="facilityForm">
-        <label for="facilityName">Facility Name:</label>
-        <input type="text" id="facilityName" required>
-        <button type="submit">💾 Save Facility Name</button>
-      </form>
-    </section>
-
-    <!-- Stats Section -->
-    <section id="stats">
-      <h2>📈 Statistics</h2>
-      <div class="stats-container">
-        <div class="stat-card">
-          <h3>Total Children</h3>
-          <div class="stat-value" id="totalChildren">0</div>
-        </div>
-        <div class="stat-card">
-          <h3>Defaulters</h3>
-          <div class="stat-value" id="totalDefaulters">0</div>
-        </div>
-        <div class="stat-card">
-          <h3>Due Soon</h3>
-          <div class="stat-value" id="totalDueSoon">0</div>
-        </div>
-        <div class="stat-card">
-          <h3>Upcoming</h3>
-          <div class="stat-value" id="totalUpcoming">0</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 1.0: Registration Form -->
-    <section id="registration">
-      <h2>👶 Register Child</h2>
-      <form id="registrationForm">
-        <label for="childName">Child's Name:</label>
-        <input type="text" id="childName" required>
-
-        <label for="dob">Date of Birth:</label>
-        <input type="date" id="dob" required>
-
-        <label for="sex">Sex:</label>
-        <select id="sex" required>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
+  <!-- Modal for Viewing Records -->
+  <div id="viewRecordsModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeViewRecordsModal()">&times;</span>
+      <h2>📋 View Immunization Records</h2>
+      <div>
+        <label for="selectChildren">Select Child(ren):</label>
+        <select id="selectChildren" multiple>
+          <!-- Options will be populated dynamically -->
         </select>
-
-        <label for="address">Address/Community:</label>
-        <input type="text" id="address" required>
-
-        <label for="contact">Contact (Optional):</label>
-        <input type="text" id="contact">
-
-        <button type="submit">✅ Register Child</button>
-      </form>
-    </section>
-
-    <!-- Section 1.1: Child Health Register -->
-    <section id="childHealthRegister">
-      <h2>📋 Child Health Register</h2>
-      <div class="search-container">
-        <input type="text" id="search" placeholder="🔍 Search by name or registration number..." oninput="filterChildren()">
+        <button onclick="viewSelectedChildrenRecords()">👁️ View Records</button>
       </div>
-      <table id="childTable">
+      <table id="viewRecordsTable">
         <thead>
           <tr>
             <th>Reg No.</th>
             <th>Name</th>
-            <th>DOB</th>
-            <th>Sex</th>
-            <th>Address</th>
+            <th>Vaccine</th>
+            <th>Date Given</th>
+            <th>Batch Number</th>
+            <th>Place Given</th>
+            <th>Remarks</th>
+            <th>Next Visit</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be populated dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal for Editing Child Details -->
+  <div id="editChildModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeEditChildModal()">&times;</span>
+      <h2>✏️ Edit Child Details</h2>
+      <form id="editChildForm">
+        <label for="editChildName">Child's Name:</label>
+        <input type="text" id="editChildName" required>
+
+        <label for="editDob">Date of Birth:</label>
+        <input type="date" id="editDob" required>
+
+        <label for="editSex">Sex:</label>
+        <select id="editSex" required>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+
+        <label for="editAddress">Address/Community:</label>
+        <input type="text" id="editAddress" required>
+
+        <label for="editContact">Contact (Optional):</label>
+        <input type="text" id="editContact">
+
+        <button type="button" onclick="saveEditedChild()">💾 Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal for Today's Appointments -->
+  <div id="todayAppointmentsModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeTodayAppointmentsModal()">&times;</span>
+      <h2>📅 Today's Appointments</h2>
+      <table id="todayAppointmentsTable">
+        <thead>
+          <tr>
+            <th>Reg No.</th>
+            <th>Name</th>
+            <th>Scheduled Vaccine</th>
             <th>Contact</th>
             <th>Actions</th>
           </tr>
@@ -289,203 +334,43 @@
           <!-- Rows will be populated dynamically -->
         </tbody>
       </table>
-      
-      <div class="action-buttons">
-        <button onclick="exportToCSV()">📤 Export to CSV</button>
-        <button onclick="printRecords()">🖨️ Print Records</button>
-        <button onclick="backupData()">💾 Backup Data</button>
-        <input type="file" id="restoreFile" accept=".json" style="display: none;">
-        <button onclick="document.getElementById('restoreFile').click()">📥 Restore Data</button>
-        <button onclick="clearAllData()" class="danger">🗑️ Clear All Data</button>
-        <button onclick="openHelpModal()">❓ Help/Instructions</button>
-      </div>
-    </section>
-
-    <!-- Section 1.2: Dashboard -->
-    <section id="dashboard">
-      <h2>📊 Dashboard</h2>
-      <div class="tab-container">
-        <div class="tab-buttons">
-          <button class="tab-button active" onclick="openTab('allRecords')">All Records</button>
-          <button class="tab-button" onclick="openTab('defaulters')">Defaulters</button>
-          <button class="tab-button" onclick="openTab('dueSoon')">Due Soon (7 days)</button>
-          <button class="tab-button" onclick="openTab('upcoming')">Upcoming (30 days)</button>
-        </div>
-        
-        <div id="allRecords" class="tab-content active">
-          <table id="allRecordsTable">
-            <thead>
-              <tr>
-                <th>Reg No.</th>
-                <th>Name</th>
-                <th>Completed Vaccines</th>
-                <th>Booked Vaccines</th>
-                <th>Next Visit Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Rows will be populated dynamically -->
-            </tbody>
-          </table>
-        </div>
-        
-        <div id="defaulters" class="tab-content">
-          <table id="defaultersTable">
-            <thead>
-              <tr>
-                <th>Reg No.</th>
-                <th>Name</th>
-                <th>Missed Vaccine</th>
-                <th>Missed Date</th>
-                <th>Days Overdue</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Rows will be populated dynamically -->
-            </tbody>
-          </table>
-        </div>
-        
-        <div id="dueSoon" class="tab-content">
-          <table id="dueSoonTable">
-            <thead>
-              <tr>
-                <th>Reg No.</th>
-                <th>Name</th>
-                <th>Due Vaccine</th>
-                <th>Due Date</th>
-                <th>Days Remaining</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Rows will be populated dynamically -->
-            </tbody>
-          </table>
-        </div>
-        
-        <div id="upcoming" class="tab-content">
-          <table id="upcomingTable">
-            <thead>
-              <tr>
-                <th>Reg No.</th>
-                <th>Name</th>
-                <th>Scheduled Vaccine</th>
-                <th>Scheduled Date</th>
-                <th>Days Remaining</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Rows will be populated dynamically -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- All existing modals remain here (unchanged) -->
-    <!-- Modal for Immunization Schedule -->
-    <div id="immunizationModal" class="modal">
-      <!-- ... existing modal content ... -->
     </div>
-
-    <!-- Modal for Booking Next Visit -->
-    <div id="bookingModal" class="modal">
-      <!-- ... existing modal content ... -->
-    </div>
-
-    <!-- Modal for Viewing Records -->
-    <div id="viewRecordsModal" class="modal">
-      <!-- ... existing modal content ... -->
-    </div>
-
-    <!-- Modal for Editing Child Details -->
-    <div id="editChildModal" class="modal">
-      <!-- ... existing modal content ... -->
-    </div>
-
-    <!-- Modal for Today's Appointments -->
-    <div id="todayAppointmentsModal" class="modal">
-      <!-- ... existing modal content ... -->
-    </div>
-
-    <!-- Modal for Help/Instructions -->
-    <div id="helpModal" class="modal">
-      <!-- ... existing modal content ... -->
-    </div>
-
-    <!-- New Modal for Facility Management -->
-    <div id="facilityManagementModal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="closeFacilityManagementModal()">&times;</span>
-        <h2>🏛️ Facility Management</h2>
-        <div class="facility-management">
-          <div class="current-facility">
-            <h3>Current Facility</h3>
-            <div class="facility-card">
-              <strong id="modalFacilityName"></strong>
-              <div class="facility-details">
-                <span>Code: <span id="modalFacilityCode"></span></span>
-                <span>Region: <span id="modalFacilityRegion"></span></span>
-                <span>District: <span id="modalFacilityDistrict"></span></span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="other-facilities">
-            <h3>Switch to Another Facility</h3>
-            <div id="facilitiesList" class="facilities-list">
-              <!-- Facilities will be populated here -->
-            </div>
-          </div>
-          
-          <div class="facility-actions">
-            <button onclick="showNewFacilityForm()" class="secondary-btn">➕ Register New Facility</button>
-            <button onclick="logout()" class="danger">🚪 Logout</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- New Modal for Change Password -->
-    <div id="changePasswordModal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="closeChangePasswordModal()">&times;</span>
-        <h2>🔒 Change Password</h2>
-        <div class="change-password-form">
-          <div class="form-group">
-            <label for="currentPassword">Current Password:</label>
-            <input type="password" id="currentPassword" required placeholder="Enter current password">
-          </div>
-          
-          <div class="form-group">
-            <label for="newPasswordChange">New Password:</label>
-            <input type="password" id="newPasswordChange" required placeholder="Enter new password">
-            <small>Password must be at least 4 characters long</small>
-          </div>
-          
-          <div class="form-group">
-            <label for="confirmNewPassword">Confirm New Password:</label>
-            <input type="password" id="confirmNewPassword" required placeholder="Confirm new password">
-          </div>
-          
-          <div class="form-actions">
-            <button onclick="changePassword()" class="login-btn">💾 Change Password</button>
-            <button onclick="closeChangePasswordModal()" class="secondary-btn">Cancel</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-      Developed By NASARE SURAJ | Immunization Tracker v4.0 | <span id="footerFacilityInfo"></span>
-    </footer>
   </div>
+
+  <!-- Modal for Help/Instructions -->
+  <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeHelpModal()">&times;</span>
+      <h2>❓ Help/Instructions</h2>
+      <div style="max-height: 60vh; overflow-y: auto;">
+        <h3>Getting Started</h3>
+        <p>1. Register a child using the registration form.</p>
+        <p>2. Update immunization records by clicking "Update" next to a child's name.</p>
+        <p>3. Use the dashboard tabs to view defaulters, due soon, or all records.</p>
+        
+        <h3>Data Management</h3>
+        <p>4. Export data to CSV or print records for offline use.</p>
+        <p>5. Backup and restore data using the respective buttons.</p>
+        <p>6. Clear all data if needed (use with caution).</p>
+        
+        <h3>Vaccination Workflow</h3>
+        <p>7. When saving immunization records, you'll be prompted to book the next visit.</p>
+        <p>8. Select vaccines for the next visit and set the date in the booking form.</p>
+        <p>9. Use the "Today's Appointments" button to quickly view today's scheduled visits.</p>
+        
+        <h3>Tips</h3>
+        <p>• Use the search function to quickly find children in the register.</p>
+        <p>• The app works completely offline - no internet connection required.</p>
+        <p>• Data is automatically saved as you work.</p>
+        <p>• Use the quick action buttons at the top for easy navigation.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    Developed By NASARE SURAJ | Immunization Tracker v2.0
+  </footer>
 
   <!-- Include Dexie.js for IndexedDB management -->
   <script src="https://unpkg.com/dexie@3.2.1/dist/dexie.js"></script>
